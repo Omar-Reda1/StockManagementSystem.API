@@ -39,6 +39,7 @@ namespace StockManagementSystem.API.Repositories
         {
             var stocks = _context.Stocks.Include(c => c.Comments).AsQueryable();
 
+            //Filtering
             if (!string.IsNullOrWhiteSpace(query.CompanyName))
             {
                 stocks = stocks.Where(s => s.CompanyName.Contains(query.CompanyName));
@@ -49,6 +50,7 @@ namespace StockManagementSystem.API.Repositories
                 stocks = stocks.Where(s => s.Symbol.Contains(query.Symbol));
             }
 
+            //Sorting
             if (!string.IsNullOrWhiteSpace(query.SortBy))
             {
                 if (query.SortBy.Equals("Industry", StringComparison.OrdinalIgnoreCase))
@@ -57,7 +59,10 @@ namespace StockManagementSystem.API.Repositories
                 }
             }
 
-            return await stocks.ToListAsync();
+            //Pagination
+            var skipNumber = (query.PageNumber-1)*query.PageSize;
+
+            return await stocks.Skip(skipNumber).Take(query.PageSize).ToListAsync();
         }
 
 
