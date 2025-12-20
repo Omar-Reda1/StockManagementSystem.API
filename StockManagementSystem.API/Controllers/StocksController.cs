@@ -30,7 +30,7 @@ namespace StockManagementSystem.API.Controllers
 
             var StockDto = stocks.Select(s => s.ToStockDto());
 
-            return Ok(stocks);
+            return Ok(StockDto);
         }
 
 
