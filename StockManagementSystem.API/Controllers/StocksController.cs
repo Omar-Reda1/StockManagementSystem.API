@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using StockManagementSystem.API.DataAccess;
 using StockManagementSystem.API.DTOs.Stock;
+using StockManagementSystem.API.Helpers;
 using StockManagementSystem.API.Mappers;
 using StockManagementSystem.API.Repositories.IRepositories;
 using System.Threading.Tasks;
@@ -24,9 +25,9 @@ namespace StockManagementSystem.API.Controllers
 
 
         [HttpGet("GetAll")]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] QueryObject query)
         {
-            var stocks = await _stockRepository.GetAllAsync();
+            var stocks = await _stockRepository.GetAllAsync(query);
 
             var StockDto = stocks.Select(s => s.ToStockDto());
 

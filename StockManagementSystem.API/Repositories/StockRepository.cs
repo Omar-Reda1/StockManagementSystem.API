@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using StockManagementSystem.API.DataAccess;
 using StockManagementSystem.API.DTOs.Stock;
+using StockManagementSystem.API.Helpers;
 using StockManagementSystem.API.Models;
 using StockManagementSystem.API.Repositories.IRepositories;
 
@@ -34,10 +35,32 @@ namespace StockManagementSystem.API.Repositories
             return stockModel;
         }
 
-        public async Task<List<Stock>> GetAllAsync()
+        public async Task<List<Stock>> GetAllAsync(QueryObject query)
         {
-            return await _context.Stocks.Include(c => c.Comments).ToListAsync();
+            var stocks = _context.Stocks.Include(c => c.Comments).AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(query.CompanyName))
+            {
+                stocks = stocks.Where(s => s.CompanyName.Contains(query.CompanyName));
+            }
+
+            if (!string.IsNullOrWhiteSpace(query.Symbol))
+            {
+                stocks = stocks.Where(s => s.Symbol.Contains(query.Symbol));
+            }
+
+            if (!string.IsNullOrWhiteSpace(query.SortBy))
+            {
+                if (query.SortBy.Equals("Industry", StringComparison.OrdinalIgnoreCase))
+                {
+                    stocks = query.IsDecsending ? stocks.OrderByDescending(s => s.Industry) : stocks.OrderBy(s => s.Industry);
+                }
+            }
+
+            return await stocks.ToListAsync();
         }
+
+
 
         public async Task<Stock?> GetByIdAsync(int id)
         {
