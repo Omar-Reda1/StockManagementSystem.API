@@ -8,6 +8,7 @@ using StockManagementSystem.API.DataAccess;
 using StockManagementSystem.API.Models;
 using StockManagementSystem.API.Repositories;
 using StockManagementSystem.API.Repositories.IRepositories;
+using StockManagementSystem.API.Services;
 using System.Threading.Tasks;
 namespace StockManagementSystem.API
 {
@@ -69,7 +70,7 @@ namespace StockManagementSystem.API
 
                   ValidateIssuerSigningKey = true,
                   IssuerSigningKey = new SymmetricSecurityKey(
-                      System.Text.Encoding.UTF8.GetBytes(builder.Configuration["JWT:SigninKey"])
+                      System.Text.Encoding.UTF8.GetBytes(builder.Configuration["JWT:SigningKey"])
                       )
 
               });
@@ -79,6 +80,7 @@ namespace StockManagementSystem.API
 
             builder.Services.AddScoped<IStockRepository, StockRepository>();
             builder.Services.AddScoped<ICommentRepository, CommentRepository>();
+            builder.Services.AddScoped<ITokenService, TokenService>();
 
             var app = builder.Build();
 
